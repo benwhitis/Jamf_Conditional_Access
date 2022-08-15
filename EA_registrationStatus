@@ -1,0 +1,35 @@
+#!/bin/bash
+#Written by Ben Whitis - 08/11/2022
+
+#get user
+loggedInUser=$( scutil <<< "show State:/Users/ConsoleUser" | awk '/Name :/ && ! /loginwindow/ { print $3 }' )
+
+#check if wpj private key is present
+WPJKey=$(security dump /Users/$loggedInUser/Library/Keychains/login.keychain-db | grep MS-ORGANIZATION-ACCESS)
+if [ ! -z "$WPJKey" ]
+then
+  #WPJ key is present
+  #check if jamfAAD plist exists
+  plist="/Users/$loggedInUser/Library/Preferences/com.jamf.management.jamfAAD.plist"
+  if [ ! -f "$plist" ]; then
+    #plist doesn't exist
+      echo "<result>WPJ Key present, JamfAAD PLIST missing</result>"
+      exit 0
+  fi
+
+  #PLIST exists. Check if jamfAAD has acquired AAD ID
+  AAD_ID=$(defaults read  /Users/$loggedInUser/Library/Preferences/com.jamf.management.jamfAAD.plist have_an_Azure_id)
+  echo "$AAD_ID"
+  if [[ $AAD_ID -eq "1" ]]; then
+    #jamfAAD ID exists
+    echo "<result>Registered</result>"
+    exit 0
+  fi
+
+  #WPJ is present but no AAD ID acquired:
+  echo "<result>WPJ Key Present. AAD ID not acquired</result>"
+  exit 0
+fi
+
+#no wpj key
+echo "<result>Not Registered</result>"
