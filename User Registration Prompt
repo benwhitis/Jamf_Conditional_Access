@@ -14,6 +14,7 @@
 #
 #   Verison 1.0.1, 06.06.2023, Robert Schroeder (@robjschroeder)
 #   - Added support for swiftDialog
+#   - Added client side logging and Pre-Flight Checks
 #
 ####################################################################################################
 
