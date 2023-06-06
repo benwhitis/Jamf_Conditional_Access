@@ -34,7 +34,7 @@ export PATH=/usr/bin:/bin:/usr/sbin:/sbin
 scriptLog="${4:-"/var/log/com.company.log"}"                 # Parameter 4: Script Log Location [ /var/log/com.company.log ] (i.e., Your organization's default location for client-side logs)
 useSwiftDialog="${5:-"false"}"                                # Parameter 5: Triggers to use swiftDialog rather than osascript [ true (default) | false ]
 useOverlayIcon="${6:-"false"}"                                # Parameter 6: Toggles swiftDialog to use an overlay icon [ true (default) | false ]
-jamfProPolicyID="${7:-"684"}"                                  # Parameter 7: The Jamf Pro ID for the device compliance registration policy
+jamfProPolicyID="${7:-"3"}"                                  # Parameter 7: The Jamf Pro ID for the device compliance registration policy
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # Various Feature Variables
