@@ -12,7 +12,7 @@
 #   Version 1.0.0, 08.15.2022, Ben Whitis (@benwhitis)
 #   - Created script to prompt user via osascript
 #
-#   Verison 1.0.1, 06.06.2023, Robert Schroeder (@robjschroeder)
+#   Verison 2.0.0, 06.06.2023, Robert Schroeder (@robjschroeder)
 #   - Added support for swiftDialog
 #   - Added client side logging and Pre-Flight Checks
 #
