@@ -16,6 +16,9 @@
 #   - Added support for swiftDialog
 #   - Added client side logging and Pre-Flight Checks
 #
+#   Version 2.0.1, 01.24.2024, Robert Schroeder (@robjschroeder)
+#   - Updated pre-flight checks for swiftDialog (Monterey or higher required)
+#
 ####################################################################################################
 
 ####################################################################################################
@@ -28,13 +31,13 @@
 # Script Version and Jamf Pro Script Parameters
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-scriptVersion="1.0.1"
+scriptVersion="2.0.1"
 scriptFunctionalName="AAD User Registration Prompt"
 export PATH=/usr/bin:/bin:/usr/sbin:/sbin
 
 scriptLog="${4:-"/var/log/com.company.log"}"                 # Parameter 4: Script Log Location [ /var/log/com.company.log ] (i.e., Your organization's default location for client-side logs)
-useSwiftDialog="${5:-"false"}"                                # Parameter 5: Triggers to use swiftDialog rather than osascript [ true (default) | false ]
-useOverlayIcon="${6:-"false"}"                                # Parameter 6: Toggles swiftDialog to use an overlay icon [ true (default) | false ]
+useSwiftDialog="${5:-"true"}"                                # Parameter 5: Triggers to use swiftDialog rather than osascript [ true (default) | false ]
+useOverlayIcon="${6:-"true"}"                                # Parameter 6: Toggles swiftDialog to use an overlay icon [ true (default) | false ]
 jamfProPolicyID="${7:-"3"}"                                  # Parameter 7: The Jamf Pro ID for the device compliance registration policy
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -126,14 +129,14 @@ updateScriptLog "PRE-FLIGHT CHECK: Finder & Dock are running; proceeding …"
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 # Since swiftDialog requires at least macOS 11 Big Sur, first confirm the major OS version
-if [[ "${osMajorVersion}" -ge 11 ]] ; then
+if [[ "${osMajorVersion}" -ge 12 ]] ; then
   
   updateScriptLog "PRE-FLIGHT CHECK: macOS ${osMajorVersion} installed; proceeding ..."
   
 else
   
-  # The Mac is running an operating system older than macOS 11 Big Sur; exit with error
-  updateScriptLog "PRE-FLIGHT CHECK: swiftDialog requires at least macOS 11 Big Sur and this Mac is running ${osVersion} (${osBuild}), proceed with osascript."
+  # The Mac is running an operating system older than macOS 12 Monterey; exit with error
+  updateScriptLog "PRE-FLIGHT CHECK: swiftDialog requires at least macOS 12 Monterey and this Mac is running ${osVersion} (${osBuild}), proceed with osascript."
   useSwiftDialog="false"
   
 fi
