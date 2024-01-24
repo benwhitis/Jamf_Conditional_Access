@@ -18,6 +18,8 @@
 #
 #   Version 2.0.1, 01.24.2024, Robert Schroeder (@robjschroeder)
 #   - Updated pre-flight checks for swiftDialog (Monterey or higher required)
+#   - Changed script to zsh for array use with dialog
+#   - Added personalized salutation based on computer's current time
 #
 ####################################################################################################
 
@@ -47,10 +49,14 @@ jamfProPolicyID="${7:-"1"}"                                  # Parameter 7: The 
 # Message variables
 title="Device Compliance Registration"
 message="Please finish setting up your computer by running the Device Compliance Registration policy in Self Service. Click OK to get started!"
-icon="/System/Library/CoreServices/Finder.app"
+icon="https://d8p1x3h4xd5gq.cloudfront.net/59822132ca753d719145cc4c/public/601ee87d92b87d67659ff2f2.png"
+helpmessage="Device Compliance is necessary to ensure that your device meets specific security standards and protocols, helping protect and maintain the integrity of your data."
+timer="120"
 
 # swiftDialog Variables
 swiftDialogMinimumRequiredVersion="2.3.2.4726"					# Minimum version of swiftDialog required to use workflow
+dialogBinary="/usr/local/bin/dialog"
+dialogCommandFile=$( /usr/bin/mktemp -u /var/tmp/dialogCommand.XXX )
 
 # Create `overlayicon` from Self Service's custom icon (thanks, @meschwartz!)
 if [[ "$useOverlayIcon" == "true" ]]; then
@@ -281,29 +287,39 @@ function quitScript() {
 
 function promptUser() {
   updateScriptLog "${scriptFunctionalName}: Prompting the user to execute policy ID: $jamfProPolicyID"
+
+  greeting=$((){print Good ${argv[2+($1>11)+($1>18)]}} ${(%):-%D{%H}} morning afternoon evening)
+
   
   if [[ "$useSwiftDialog" == "true" ]]; then
     updateScriptLog "${scriptFunctionalName}: Prompting user using swiftDialog..."
+
+    # Create the deferrals available dialog options and content
+    deferralDialogContent=(
+        --title "$title"
+        --message "$greeting $loggedInUserFirstname! $message"
+        --helpmessage "$helpmessage"
+        --icon "$icon"
+        --iconsize 180
+        --overlayicon "$overlayicon"
+        --timer "$timer"
+        --button1text "Ok"
+    )
+
+    deferralDialogOptions=(
+        --position center
+        --movable
+        --small
+        --ignorednd
+        --quitkey k
+        --titlefont size=28
+        --messagefont size=18
+        --commandfile "$dialogCommandFile"
+    )
     
-    dialogApp="/usr/local/bin/dialog"
-    dialogCommandFile=$( /usr/bin/mktemp -u /var/tmp/dialogCommand.XXX )
-    dialogCMD="$dialogApp --ontop \
-    --title \"$title\" \
-    --message \"Hello $loggedInUserFirstname! $message\" \
-    --icon \"$icon\" \
-    --button1text \"OK\" \
-    --overlayicon \"$overlayicon\" \
-    --titlefont 'size=28' \
-    --messagefont 'size=14' \
-    --small \
-    --moveable \
-    --timer 120 \
-    --position 'centre' \
-    --ignorednd \
-    --commandfile \"$dialogCommandFile\" "
     
-    eval "$dialogCMD"
-    
+    "$dialogBinary" "${deferralDialogContent[@]}" "${deferralDialogOptions[@]}"
+            
     returnCode=$?
     
     case ${returnCode} in 
