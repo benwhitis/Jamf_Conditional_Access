@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 # shellcheck disable=SC2034,SC2309
 
 ####################################################################################################
@@ -38,7 +38,7 @@ export PATH=/usr/bin:/bin:/usr/sbin:/sbin
 scriptLog="${4:-"/var/log/com.company.log"}"                 # Parameter 4: Script Log Location [ /var/log/com.company.log ] (i.e., Your organization's default location for client-side logs)
 useSwiftDialog="${5:-"true"}"                                # Parameter 5: Triggers to use swiftDialog rather than osascript [ true (default) | false ]
 useOverlayIcon="${6:-"true"}"                                # Parameter 6: Toggles swiftDialog to use an overlay icon [ true (default) | false ]
-jamfProPolicyID="${7:-"3"}"                                  # Parameter 7: The Jamf Pro ID for the device compliance registration policy
+jamfProPolicyID="${7:-"1"}"                                  # Parameter 7: The Jamf Pro ID for the device compliance registration policy
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # Various Feature Variables
@@ -48,6 +48,9 @@ jamfProPolicyID="${7:-"3"}"                                  # Parameter 7: The 
 title="Device Compliance Registration"
 message="Please finish setting up your computer by running the Device Compliance Registration policy in Self Service. Click OK to get started!"
 icon="/System/Library/CoreServices/Finder.app"
+
+# swiftDialog Variables
+swiftDialogMinimumRequiredVersion="2.3.2.4726"					# Minimum version of swiftDialog required to use workflow
 
 # Create `overlayicon` from Self Service's custom icon (thanks, @meschwartz!)
 if [[ "$useOverlayIcon" == "true" ]]; then
@@ -174,58 +177,65 @@ updateScriptLog "PRE-FLIGHT CHECK: Current Logged-in User First Name: ${loggedIn
 updateScriptLog "PRE-FLIGHT CHECK: Current Logged-in User ID: ${loggedInUserID}"
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# Pre-flight Check: Validate / install swiftDialog (Thanks big bunches, @acodega!)
+# Pre-flight Check: Validate/install swiftDialog (Thanks big bunches, @acodega!)
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-function dialogCheck() {
-  
-  # Get the URL of the latest PKG From the Dialog GitHub repo
-  dialogURL=$(curl --silent --fail "https://api.github.com/repos/bartreardon/swiftDialog/releases/latest" | awk -F '"' "/browser_download_url/ && /pkg\"/ { print \$4; exit }")
-  
-  # Expected Team ID of the downloaded PKG
-  expectedDialogTeamID="PWA5E9TQ59"
-  
-  # Check for Dialog and install if not found
-  if [ ! -e "/Library/Application Support/Dialog/Dialog.app" ]; then
-    
-    updateScriptLog "PRE-FLIGHT CHECK: Dialog not found. Installing..."
-    
-    # Create temporary working directory
-    workDirectory=$( /usr/bin/basename "$0" )
-    tempDirectory=$( /usr/bin/mktemp -d "/private/tmp/$workDirectory.XXXXXX" )
-    
+
+
+function dialogInstall() {
+
+    # Get the URL of the latest PKG From the Dialog GitHub repo
+    dialogURL=$(curl -L --silent --fail "https://api.github.com/repos/swiftDialog/swiftDialog/releases/latest" | awk -F '"' "/browser_download_url/ && /pkg\"/ { print \$4; exit }")
+
+    # Expected Team ID of the downloaded PKG
+    expectedDialogTeamID="PWA5E9TQ59"
+
+    updateScriptLog "Installing swiftDialog..."
+
+    # Create a temporary working directory
+    workDirectory=$( basename "$0" )
+    tempDirectory=$( mktemp -d "/private/tmp/$workDirectory.XXXXXX" )
+
     # Download the installer package
-    /usr/bin/curl --location --silent "$dialogURL" -o "$tempDirectory/Dialog.pkg"
-    
+    curl --location --silent "$dialogURL" -o "$tempDirectory/Dialog.pkg"
+
     # Verify the download
-    teamID=$(/usr/sbin/spctl -a -vv -t install "$tempDirectory/Dialog.pkg" 2>&1 | awk '/origin=/ {print $NF }' | tr -d '()')
-    
+    teamID=$(spctl -a -vv -t install "$tempDirectory/Dialog.pkg" 2>&1 | awk '/origin=/ {print $NF }' | tr -d '()')
+
     # Install the package if Team ID validates
     if [[ "$expectedDialogTeamID" == "$teamID" ]]; then
-      
-      /usr/sbin/installer -pkg "$tempDirectory/Dialog.pkg" -target /
-      sleep 2
-      dialogVersion=$( /usr/local/bin/dialog --version )
-      updateScriptLog "PRE-FLIGHT CHECK: swiftDialog version ${dialogVersion} installed; proceeding..."
-      
+        /usr/sbin/installer -pkg "$tempDirectory/Dialog.pkg" -target /
+        sleep 2
+        dialogVersion=$( /usr/local/bin/dialog --version )
+        updateScriptLog "swiftDialog version ${dialogVersion} installed; proceeding..."
     else
-      
-      # Display a so-called "simple" dialog if Team ID fails to validate
-      osascript -e 'display dialog "Please advise your Support Representative of the following error:\r\r• Dialog Team ID verification failed\r\r" with title "'"${scriptFunctionalName}"': Error" buttons {"Close"} with icon caution'
-      exitCode="1"
-      quitScript
-      
+        # Display a so-called "simple" dialog if Team ID fails to validate
+        osascript -e 'display dialog "Please advise your Support Representative of the following error:\r\r• Dialog Team ID verification failed\r\r" with title "'"${scriptFunctionalName}"': Error" buttons {"Close"} with icon caution'
+        exitCode="1"
+        quitScript
     fi
-    
+
     # Remove the temporary working directory when done
-    /bin/rm -Rf "$tempDirectory"
-    
-  else
-    
-    updateScriptLog "PRE-FLIGHT CHECK: swiftDialog version $(/usr/local/bin/dialog --version) found; proceeding..."
-    
-  fi
-  
+    rm -Rf "$tempDirectory"
+
+}
+
+function dialogCheck() {
+
+    # Check for Dialog and install if not found
+    if [ ! -e "/Library/Application Support/Dialog/Dialog.app" ]; then
+        updateScriptLog "swiftDialog not found. Installing..."
+        dialogInstall
+    else
+        dialogVersion=$(/usr/local/bin/dialog --version)
+        if [[ "${dialogVersion}" < "${swiftDialogMinimumRequiredVersion}" ]]; then
+            updateScriptLog "swiftDialog version ${dialogVersion} found but swiftDialog ${swiftDialogMinimumRequiredVersion} or newer is required; updating..."
+            dialogInstall
+        else
+            updateScriptLog "swiftDialog version ${dialogVersion} found; proceeding..."
+        fi
+    fi
+
 }
 
 if [[ ! -e "/Library/Application Support/Dialog/Dialog.app" ]]; then
@@ -330,7 +340,7 @@ EOF
     
       updateScriptLog "${scriptFunctionalName}: $loggedInUser clicked $answer"
     
-      if [[ $answer -eq "OK" ]]; then
+      if [[ $answer == "OK" ]]; then
       su "$loggedInUser" -c "/usr/bin/killall Self\ Service"
       su "$loggedInUser" -c "/usr/bin/open \"jamfselfservice://content?entity=policy&id=$jamfProPolicyID&action=view\""
       fi
