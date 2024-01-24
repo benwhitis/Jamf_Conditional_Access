@@ -263,6 +263,22 @@ updateScriptLog "PRE-FLIGHT CHECK: Complete"
 # General Functions
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
+function killProcess() {
+
+    process="$1"
+    if process_pid=$( pgrep -a "${process}" 2>/dev/null ) ; then
+        updateScriptLog "Attempting to terminate the '$process' process …"
+        updateScriptLog "(Termination message indicates success.)"
+        kill "$process_pid" 2> /dev/null
+        if pgrep -a "$process" >/dev/null ; then
+            updateScriptLog "'$process' could not be terminated."
+        fi
+    else
+        updateScriptLog "The '$process' process isn't running."
+    fi
+
+}
+
 function quitScript() {
   updateScriptLog "QUIT SCRIPT: Exiting …"
   
