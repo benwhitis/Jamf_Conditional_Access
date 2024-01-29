@@ -324,7 +324,7 @@ function promptUser() {
 
     deferralDialogOptions=(
         --position center
-        --movable
+        --moveable
         --small
         --ignorednd
         --quitkey k
