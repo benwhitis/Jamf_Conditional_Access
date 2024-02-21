@@ -245,7 +245,7 @@ function dialogCheck() {
 }
 
 if [[ ! -e "/Library/Application Support/Dialog/Dialog.app" ]]; then
-  if [ "${useSwiftDialog}" == "true" ]; then
+  if [[ "${useSwiftDialog}" == "true" ]]; then
     updateScriptLog "PRE-FLIGHT CHECK: swiftDialog is not found and is configured to be used..."
     dialogCheck
   fi
