@@ -21,6 +21,9 @@
 #   - Changed script to zsh for array use with dialog
 #   - Added personalized salutation based on computer's current time
 #
+#  Version 2.0.2, 02.21.2024, Ben Whitis (@benwhitis)
+#  - Addressed an issue where some computers were experiencing errors during the swift dialog check process, resulting in a `= not found` in the logs (Issue #2)
+#
 ####################################################################################################
 
 ####################################################################################################
