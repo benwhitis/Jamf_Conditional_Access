@@ -36,7 +36,7 @@
 # Script Version and Jamf Pro Script Parameters
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-scriptVersion="2.0.1"
+scriptVersion="2.0.2"
 scriptFunctionalName="AAD User Registration Prompt"
 export PATH=/usr/bin:/bin:/usr/sbin:/sbin
 
