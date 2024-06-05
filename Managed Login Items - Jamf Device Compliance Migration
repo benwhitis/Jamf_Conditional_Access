@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>PayloadContent</key>
+	<array>
+		<dict>
+			<key>PayloadDisplayName</key>
+			<string>Managed Login Items</string>
+			<key>PayloadIdentifier</key>
+			<string>B8AF9ED4-1C7A-4D01-84E0-28A98C599339</string>
+			<key>PayloadOrganization</key>
+			<string>JAMF Software</string>
+			<key>PayloadType</key>
+			<string>com.apple.servicemanagement</string>
+			<key>PayloadUUID</key>
+			<string>B8AF9ED4-1C7A-4D01-84E0-28A98C599339</string>
+			<key>PayloadVersion</key>
+			<integer>1</integer>
+			<key>Rules</key>
+			<array>
+				<dict>
+					<key>Comment</key>
+					<string>Allows the agent that will perform the migration between the Conditional Access and Device Compliance Jamf Pro integrations</string>
+					<key>RuleType</key>
+					<string>Label</string>
+					<key>RuleValue</key>
+					<string>com.jamf.management.jamfAAD.migrator.plist</string>
+				</dict>
+			</array>
+		</dict>
+	</array>
+	<key>PayloadDescription</key>
+	<string></string>
+	<key>PayloadDisplayName</key>
+	<string>Managed Login Items - Jamf Conditional Access Migrator</string>
+	<key>PayloadEnabled</key>
+	<true/>
+	<key>PayloadIdentifier</key>
+	<string>E5EDD75A-DC77-49B8-9C3B-8464CFF4B014</string>
+	<key>PayloadOrganization</key>
+	<string>Jamf Technical Support</string>
+	<key>PayloadRemovalDisallowed</key>
+	<true/>
+	<key>PayloadScope</key>
+	<string>System</string>
+	<key>PayloadType</key>
+	<string>Configuration</string>
+	<key>PayloadUUID</key>
+	<string>E5EDD75A-DC77-49B8-9C3B-8464CFF4B014</string>
+	<key>PayloadVersion</key>
+	<integer>1</integer>
+</dict>
+</plist>
