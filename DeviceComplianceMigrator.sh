@@ -69,6 +69,8 @@ function make_la {
     <integer>10</integer>
     <key>RunAtLoad</key>
     <true/>
+    <key>LaunchOnlyOnce</key>
+    <true/>
     <key>StandardErrorPath</key>
     <string>/tmp/jamfaad.log</string>
     <key>StandardOutPath</key>
