@@ -4,7 +4,7 @@
 # IN NO EVENT SHALL JAMF SOFTWARE, LLC OR ANY OF ITS AFFILIATES BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OF OR OTHER DEALINGS IN THE SOFTWARE, 
 # INCLUDING BUT NOT LIMITED TO DIRECT, INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL OR PUNITIVE DAMAGES AND OTHER DAMAGES SUCH AS LOSS OF USE, PROFITS, SAVINGS, TIME OR DATA, BUSINESS INTERRUPTION, OR PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES.
 
-# This script is ONLY intended to be used by commercial Entra ID tenants. Please reach out to Jamf support for a GCC High version if needed.
+# ENVIRONMENTS USING GCC HIGH: Modify the expected Client ID on line 18 before deploying.
 # This script does the following: 
 # 1: Verify the jamf management framework is ready for the migration from Conditional Access to Device Compliance
 # 2: Create a LaunchAgent to call a gatherAADInfo whenever the user logs in (will run immediately if user is already logged in)
@@ -14,7 +14,7 @@
 
 #check jamf management plist for updated client ID
 localClientID=$(/usr/bin/defaults read /Library/Preferences/com.jamfsoftware.jamf.plist microsoftCANativeClientAppId)
-#Client ID for "User registration app for device compliance"
+#Client ID for "User registration app for device compliance". For GCC High environments, please change the ID to dcf07df3-346f-4f0e-b803-c1f0ea0fb5ae on the line below.
 expectedClientID="b03c10a8-71c7-45f9-b44a-3335ab76e970"
 #Verify CAEnabled
 CAEnabled=$(/usr/bin/defaults read /Library/Preferences/com.jamfsoftware.jamf.plist microsoftCAEnabled)
