@@ -3,7 +3,7 @@
 #Updated 11/29/2023 - use dscl to identify user home directory for scenarios where loggedInUser is an alias
 #Updated 10/10/2024 - added support for platformSSO referencing @robjschroeder's EA
 #Updated 10/03/2025 - modified how login keychain is queried, return device ID in result
-#Updated 10/03/2025 - added support for 'getPSSOStatus' verb
+#Updated 10/03/2025 - added support for 'getPSSOStatus' verb - REQUIRES JAMF PRO 11.21.1 OR HIGHER
 #Updated 11/24/2025 - switch to 'launchctl asuser' instead of `su -c`
 
 #get user
