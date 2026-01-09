@@ -1,3 +1,8 @@
+### WARNING
+### This script will not work as expected when the changes referenced here go live: https://learn.microsoft.com/en-us/entra/identity-platform/apple-sso-plugin#upcoming-changes-to-device-identity-key-storage
+### This script will not work as expected when computers have registered with Platform SSO
+### Usage of this script is not recommended
+
 #!/bin/bash
 # Written by Ben Whitis 10/23/2023
 # Updated 1/16/2024
